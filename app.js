@@ -698,15 +698,6 @@ async function generatePdf(invoiceOverride = null) {
   safeText(doc, COMPANY.tagline, 54, 45);
   safeText(doc, `${COMPANY.phoneOne}  |  ${COMPANY.phoneTwo}`, 54, 51);
 
-  const servicesLine =
-    "Epoxy Floors • Tree Services • Pressure Washing • Acrylic Flooring • Landscaping • Painting";
-
-  doc.setFontSize(8.2);
-  doc.setTextColor(...charcoal);
-
-  const serviceHeaderLines = doc.splitTextToSize(servicesLine, 98);
-  doc.text(serviceHeaderLines, 54, 57);
-
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.setTextColor(...black);
