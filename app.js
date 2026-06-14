@@ -593,6 +593,47 @@ async function imageToDataUrl(url) {
   return await readFileAsDataUrl(blob);
 }
 
+async function createWatermarkDataUrl(sourceDataUrl, opacity = 0.075) {
+  return new Promise((resolve) => {
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 900;
+      canvas.height = 900;
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = opacity;
+
+      const maxSize = 720;
+      const scale = Math.min(maxSize / img.width, maxSize / img.height);
+      const w = img.width * scale;
+      const h = img.height * scale;
+      const x = (canvas.width - w) / 2;
+      const y = (canvas.height - h) / 2;
+
+      ctx.drawImage(img, x, y, w, h);
+
+      resolve(canvas.toDataURL("image/png"));
+    };
+
+    img.src = sourceDataUrl;
+  });
+}
+
+function addPdfWatermark(doc, watermarkData, pageW, pageH) {
+  if (!watermarkData) return;
+
+  const watermarkW = 135;
+  const watermarkH = 135;
+  const x = (pageW - watermarkW) / 2;
+  const y = (pageH - watermarkH) / 2 + 8;
+
+  doc.addImage(watermarkData, "PNG", x, y, watermarkW, watermarkH);
+}
+
 function addStatusBadge(doc, status, x, y) {
   const colors = {
     Paid: [31, 122, 77],
@@ -667,15 +708,19 @@ async function generatePdf(invoiceOverride = null) {
   const line = [230, 223, 207];
 
   let logoData = "";
+  let watermarkData = "";
 
   try {
     logoData = await imageToDataUrl(LOGO_PATH);
+    watermarkData = await createWatermarkDataUrl(logoData, 0.075);
   } catch (error) {
-    console.warn("Logo failed to load for PDF", error);
+    console.warn("Logo or watermark failed to load for PDF", error);
   }
 
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, pageW, pageH, "F");
+
+  addPdfWatermark(doc, watermarkData, pageW, pageH);
 
   doc.setFillColor(...black);
   doc.rect(0, 0, pageW, 22, "F");
@@ -791,6 +836,12 @@ async function generatePdf(invoiceOverride = null) {
   data.services.forEach((item) => {
     if (tableY > 225) {
       doc.addPage();
+
+      doc.setFillColor(255, 255, 255);
+      doc.rect(0, 0, pageW, pageH, "F");
+
+      addPdfWatermark(doc, watermarkData, pageW, pageH);
+
       tableY = 25;
     }
 
@@ -872,6 +923,8 @@ async function generatePdf(invoiceOverride = null) {
 
     doc.setFillColor(255, 255, 255);
     doc.rect(0, 0, pageW, pageH, "F");
+
+    addPdfWatermark(doc, watermarkData, pageW, pageH);
 
     doc.setFillColor(...black);
     doc.rect(0, 0, pageW, 18, "F");
