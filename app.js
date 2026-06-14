@@ -593,7 +593,7 @@ async function imageToDataUrl(url) {
   return await readFileAsDataUrl(blob);
 }
 
-async function createWatermarkDataUrl(sourceDataUrl, opacity = 0.075) {
+async function createWatermarkDataUrl(sourceDataUrl, opacity = 0.16) {
   return new Promise((resolve) => {
     const img = new Image();
 
@@ -626,10 +626,10 @@ async function createWatermarkDataUrl(sourceDataUrl, opacity = 0.075) {
 function addPdfWatermark(doc, watermarkData, pageW, pageH) {
   if (!watermarkData) return;
 
-  const watermarkW = 135;
-  const watermarkH = 135;
+  const watermarkW = 165;
+  const watermarkH = 165;
   const x = (pageW - watermarkW) / 2;
-  const y = (pageH - watermarkH) / 2 + 8;
+  const y = (pageH - watermarkH) / 2 + 4;
 
   doc.addImage(watermarkData, "PNG", x, y, watermarkW, watermarkH);
 }
@@ -712,7 +712,7 @@ async function generatePdf(invoiceOverride = null) {
 
   try {
     logoData = await imageToDataUrl(LOGO_PATH);
-    watermarkData = await createWatermarkDataUrl(logoData, 0.075);
+    watermarkData = await createWatermarkDataUrl(logoData, 0.16);
   } catch (error) {
     console.warn("Logo or watermark failed to load for PDF", error);
   }
