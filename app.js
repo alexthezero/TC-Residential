@@ -57,6 +57,7 @@ const els = {
 
 function money(value) {
   const number = Number(value || 0);
+
   return number.toLocaleString("en-US", {
     style: "currency",
     currency: "USD"
@@ -65,6 +66,14 @@ function money(value) {
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
+}
+
+function createId() {
+  if (window.crypto && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return `invoice-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function getNextInvoiceNumber() {
@@ -387,7 +396,7 @@ function getInvoiceData() {
   const balance = Math.max(total - paid, 0);
 
   return {
-    id: activeInvoiceId || crypto.randomUUID(),
+    id: activeInvoiceId || createId(),
     invoiceNumber,
     invoiceDate: els.invoiceDate.value,
     paymentStatus: els.paymentStatus.value,
@@ -688,7 +697,15 @@ async function generatePdf(invoiceOverride = null) {
   doc.setTextColor(...charcoal);
   safeText(doc, COMPANY.tagline, 54, 45);
   safeText(doc, `${COMPANY.phoneOne}  |  ${COMPANY.phoneTwo}`, 54, 51);
-  safeText(doc, COMPANY.services.join(" • "), 54, 57);
+
+  const servicesLine =
+    "Epoxy Floors • Tree Services • Pressure Washing • Acrylic Flooring • Landscaping • Painting";
+
+  doc.setFontSize(8.2);
+  doc.setTextColor(...charcoal);
+
+  const serviceHeaderLines = doc.splitTextToSize(servicesLine, 98);
+  doc.text(serviceHeaderLines, 54, 57);
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
