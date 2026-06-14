@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#caa24a" />
+  <title>TC Residential Solutions LLC Invoice App</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="tc-logo.jpeg" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero-card">
+      <div class="brand-wrap">
+        <img src="tc-logo.jpeg" alt="TC Residential Solutions LLC logo" class="brand-logo" />
+        <div>
+          <p class="eyebrow">Invoice Builder</p>
+          <h1>TC Residential Solutions LLC</h1>
+          <p class="subline">Epoxy • Tree Services • Pressure Washing • Acrylic Flooring • Landscaping • Painting</p>
+          <p class="phones">(904) 442-5477 &nbsp;|&nbsp; (859) 522-5541</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid-layout">
+      <form id="invoiceForm" class="card form-card">
+        <div class="section-title-row">
+          <h2>Invoice Details</h2>
+          <span id="invoiceBadge" class="invoice-badge">INV-1000</span>
+        </div>
+
+        <div class="two-col">
+          <label>
+            Invoice Date
+            <input type="date" id="invoiceDate" required />
+          </label>
+
+          <label>
+            Payment Status
+            <select id="paymentStatus">
+              <option value="Unpaid">Unpaid</option>
+              <option value="Partial">Partial</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="partialPaymentBox" class="partial-box hidden">
+          <label>
+            Amount Paid
+            <input type="number" id="amountPaid" min="0" step="0.01" placeholder="0.00" />
+          </label>
+        </div>
+
+        <h3>Customer Info</h3>
+
+        <div class="two-col">
+          <label>
+            Customer Name
+            <input type="text" id="customerName" placeholder="John Smith" required />
+          </label>
+
+          <label>
+            Customer Phone
+            <input type="tel" id="customerPhone" placeholder="(555) 555-5555" />
+          </label>
+        </div>
+
+        <label>
+          Customer Email
+          <input type="email" id="customerEmail" placeholder="customer@email.com" />
+        </label>
+
+        <label>
+          Job Address
+          <textarea id="customerAddress" rows="2" placeholder="Street, City, State ZIP" required></textarea>
+        </label>
+
+        <h3>Services</h3>
+
+        <div id="servicesContainer" class="services-container"></div>
+
+        <button type="button" id="addServiceBtn" class="secondary-btn">+ Add Service</button>
+
+        <div class="total-panel">
+          <div>
+            <span>Total</span>
+            <strong id="totalPreview">$0.00</strong>
+          </div>
+          <div>
+            <span>Paid</span>
+            <strong id="paidPreview">$0.00</strong>
+          </div>
+          <div>
+            <span>Balance</span>
+            <strong id="balancePreview">$0.00</strong>
+          </div>
+        </div>
+
+        <h3>Before / After Photos <span class="optional">optional</span></h3>
+
+        <div class="photo-grid">
+          <label class="photo-box">
+            Before Photo
+            <input type="file" id="beforePhoto" accept="image/*" />
+            <img id="beforePreview" alt="Before preview" class="photo-preview hidden" />
+          </label>
+
+          <label class="photo-box">
+            After Photo
+            <input type="file" id="afterPhoto" accept="image/*" />
+            <img id="afterPreview" alt="After preview" class="photo-preview hidden" />
+          </label>
+        </div>
+
+        <div class="photo-actions">
+          <button type="button" id="clearBeforePhoto" class="tiny-btn">Clear Before</button>
+          <button type="button" id="clearAfterPhoto" class="tiny-btn">Clear After</button>
+        </div>
+
+        <h3>Notes</h3>
+
+        <label>
+          Work Notes / Terms
+          <textarea id="notes" rows="3" placeholder="Add job notes, warranty details, prep instructions, or payment terms here."></textarea>
+        </label>
+
+        <h3>Customer Signature</h3>
+
+        <div class="signature-wrap">
+          <canvas id="signaturePad"></canvas>
+        </div>
+
+        <button type="button" id="clearSignatureBtn" class="tiny-btn">Clear Signature</button>
+
+        <div class="button-row">
+          <button type="button" id="saveInvoiceBtn" class="secondary-btn">Save Invoice</button>
+          <button type="button" id="generatePdfBtn" class="primary-btn">Generate PDF</button>
+          <button type="button" id="resetFormBtn" class="danger-btn">Reset</button>
+        </div>
+      </form>
+
+      <aside class="card saved-card">
+        <h2>Saved Invoices</h2>
+        <p class="small-copy">Saved locally on this device/browser.</p>
+        <div id="savedInvoicesList" class="saved-list"></div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
